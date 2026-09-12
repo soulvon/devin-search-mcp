@@ -27,7 +27,11 @@
     "ai",
     "claude"
   ],
-  "author": "soulvon",
+  "author": "suvon",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/soulvon/devin-search-mcp.git"
