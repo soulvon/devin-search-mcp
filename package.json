@@ -1,0 +1,45 @@
+{
+  "name": "devin-search-mcp",
+  "version": "1.0.0",
+  "description": "Devin AI 驱动的联网搜索与网页抓取 MCP 服务 (基于 Devin Desktop / CLI)",
+  "main": "src/index.mjs",
+  "type": "module",
+  "bin": {
+    "devin-search-mcp": "./bin/devin-search-mcp.mjs"
+  },
+  "scripts": {
+    "start": "node ./bin/devin-search-mcp.mjs",
+    "test": "node test.mjs",
+    "test:mcp": "node test-mcp-protocol.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "mcp",
+    "devin",
+    "web-search",
+    "search",
+    "webfetch",
+    "ai",
+    "claude"
+  ],
+  "author": "soulvon",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soulvon/devin-search-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/soulvon/devin-search-mcp/issues"
+  },
+  "homepage": "https://github.com/soulvon/devin-search-mcp#readme",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "sql.js": "^1.14.2",
+    "zod": "^3.23.8"
+  }
+}
