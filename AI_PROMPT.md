@@ -7,13 +7,16 @@
 
 ## 1. 这个 MCP 是干什么的？
 
-`devin-search-mcp` 是一个标准 MCP (Model Context Protocol) 插件。它把 Devin 内部高质量的**全网实时搜索 (`devin_web_search`)** 和**网页正文深度去噪抓取 (`devin_web_fetch`)** 能力抽出来给所有 AI 使用。
+`devin-search-mcp` 是一个标准 MCP (Model Context Protocol) 插件。它把 Devin 内部高质量的**全网实时检索**和**网页正文深度去噪抓取**能力抽出来给所有 AI 使用。
+
+**核心特性：极速且零模型消耗**
+* 它不启动任何本地重型客户端进程，而是直连 Devin 官方原生检索网关（逆向后直接调用 `GetWebSearchResults` RPC）。
+* **不经过任何大模型推理，零 Token 额度消耗**，响应速度稳定在 1~1.5 秒。
 
 你可以使用的核心工具：
 * **`devin_web_search`**：用自然语言搜索整个互联网。查最新发布的框架、新版本变更、GitHub Issue 或冷门报错方案。
 * **`devin_web_fetch`**：输入一个 URL，帮你抓取干净的 Markdown 正文，自动剔除导航栏、广告和脚本代码。
 * **`extract_devin_key`**：自动读取本地 Devin / Windsurf 登录 Token。
-* **`devin_status`**：检查本地 Devin 引擎路径与健康状态。
 
 ---
 
@@ -50,22 +53,6 @@
 ```
 
 *注意：只要用户的系统里装有 Devin Desktop 或已登录过 Devin，它会自动跨平台读取凭据，完全不需要在 `env` 里硬编码任何 API Key。*
-
-### 第三步：非常规路径特别处理（可选）
-
-如果用户的 Devin Desktop 安装在特殊的非默认盘符（例如 Windows 上的 `E:\Program\devin`），你可以为其补充 `DEVIN_PATH` 环境变量：
-
-```json
-{
-  "devin-search": {
-    "command": "npx",
-    "args": ["-y", "devin-search-mcp"],
-    "env": {
-      "DEVIN_PATH": "E:\\Program\\devin\\resources\\app\\extensions\\windsurf\\devin\\bin\\devin.exe"
-    }
-  }
-}
-```
 
 ---
 

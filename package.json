@@ -1,7 +1,7 @@
 {
   "name": "devin-search-mcp",
-  "version": "1.0.6",
-  "description": "Devin AI 驱动的联网搜索与网页抓取 MCP 服务 (基于 Devin Desktop / CLI)",
+  "version": "2.0.0",
+  "description": "极速全网实时检索与网页抓取 MCP 服务，直连 Devin 官方网关，零大模型消耗，零本地进程 (支持 Cursor, Claude, CodeBuddy)",
   "main": "src/index.mjs",
   "type": "module",
   "bin": {
@@ -44,7 +44,6 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
-    "sql.js": "^1.14.2",
-    "zod": "^3.23.8"
+    "sql.js": "^1.14.2"
   }
 }
