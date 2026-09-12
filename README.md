@@ -4,13 +4,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node: >=18](https://img.shields.io/badge/Node.js->=18-green.svg)](https://nodejs.org/)
 
+[English](#-english) | [简体中文](#-简体中文)
+
+---
+
+## 🌐 English
+
 AI-driven real-time Web Search and Web Fetch as an MCP tool — powered by Devin AI's developer-focused search gateway.
 
 Any MCP-compatible client (**Claude Code, Claude Desktop, Cursor, CodeBuddy, Windsurf, Cline**, etc.) can use this to search the open web with natural language and fetch clean webpage content without noise.
 
----
-
-## How It Works
+### How It Works
 
 ```text
 You: "What's new in Next.js 15 and how to migrate?"
@@ -34,46 +38,93 @@ Found 5 relevant results.
   [1/5] Next.js 15 Release Notes (https://nextjs.org/blog/next-15)
   [2/5] Upgrade Guide: v14 to v15 (https://nextjs.org/docs/app/building-your-application/upgrading/version-15)
   [3/5] React 19 RC Integration Notes...
-
-[config] query="Next.js 15 migration", latency=650ms, cached=false
 ```
 
----
+### Quick Setup
 
-## Prerequisites
-
-* **Node.js** >= 18
-* **Devin account** — Free tier works (auto-extracts credentials from local installation)
-* Works on **macOS**, **Windows**, and **Linux**
-
----
-
-## Quick Setup (Recommended)
-
-No installation required! Use `npx` directly in your MCP client configuration.
-
-### 1. Claude Code (CLI)
-
-Add to `~/.claude.json` under `mcpServers`:
+Add to your MCP configuration (`claude_desktop_config.json`, `~/.claude.json`, or `.cursor/mcp.json`):
 
 ```json
 {
-  "devin-search": {
-    "command": "npx",
-    "args": [
-      "-y",
-      "devin-search-mcp"
-    ]
+  "mcpServers": {
+    "devin-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "devin-search-mcp"
+      ]
+    }
   }
 }
 ```
 
-### 2. Claude Desktop
+### MCP Tools
 
-Add to `claude_desktop_config.json` under `mcpServers`:
+* **`devin_web_search`**: Real-time web search with natural language queries (`query`, `num_results`, `detailed`).
+* **`devin_web_fetch`**: Deep webpage content reader that strips ads, navbars, and cookie banners (`url`, `extract_mode`).
+* **`extract_devin_key`**: Auto-extract Devin / Windsurf API Key / Session Token from local installation.
+* **`devin_status`**: Diagnostic tool for local Devin engine path and login identity.
 
-* **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+---
+
+## 🇨🇳 简体中文
+
+基于 Devin 原生引擎的 AI 联网网页搜索与深度正文抓取 MCP (Model Context Protocol) 插件。
+
+适用于任意支持 MCP 的客户端（**CodeBuddy、Cursor、Claude Desktop、Claude Code、Windsurf、Cline** 等），赋予大模型实时联网检索开发者技术文档、最新版本特性、解决方案与深度阅读网页正文的能力。
+
+### 工作原理
+
+```text
+用户提问: "Vue 3.5 发布了哪些新特性？怎么升级？"
+         │
+         ▼
+┌────────────────────────────────────────────────────────┐
+│                   Devin Search MCP                     │
+│                  (本地 MCP 服务端)                     │
+│                                                        │
+│  1. 自动探测本地 Devin 安装路径与登录凭据 (跨平台)     │
+│  2. 智能转译搜索意图，构建开发者最佳搜索指令           │
+│  3. 驱动 Devin 官方针对开发者深度优化的 web_search     │
+│  4. 响应深度修复与括号平衡容错 (response-repair)       │
+│  5. 网页正文深度去噪与正文清洗 (webfetch)              │
+│  6. 轻量级内存 MD5 + TTL 缓存，相同查询毫秒级返回      │
+│  7. 返回标准化结构 (包含标题、链接、要点摘录与 Markdown)│
+└────────────────────────────────────────────────────────┘
+         │
+         ▼
+检索到 3 条核心结果:
+  [1/3] Announcing Vue 3.5 | The Vue Point (https://blog.vuejs.org/posts/vue-3-5)
+  [2/3] Vue 3.5 响应式系统重构与内存优化 56%...
+  [3/3] Reactive Props Destructure 稳定版指南...
+```
+
+### 快速配置 (开箱即用)
+
+无需手动克隆代码，直接在你的客户端 MCP 配置文件中添加配置即可：
+
+#### 1. CodeBuddy / Cursor
+
+在 `.codebuddy/mcp.json` 或 `.cursor/mcp.json` (或全局设置) 中加入：
+
+```json
+{
+  "mcpServers": {
+    "devin-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "devin-search-mcp"
+      ]
+    }
+  }
+}
+```
+
+#### 2. Claude Desktop (桌面端)
+
 * **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+* **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 
 ```json
 {
@@ -89,25 +140,11 @@ Add to `claude_desktop_config.json` under `mcpServers`:
 }
 ```
 
-### 3. Cursor / CodeBuddy
+#### 3. Claude Code (命令行端)
 
-Add to `.cursor/mcp.json` or `.codebuddy/mcp.json` (or Global Settings):
+在 `~/.claude.json` 中的 `mcpServers` 字段下添加上述相同配置。
 
-```json
-{
-  "mcpServers": {
-    "devin-search": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "devin-search-mcp"
-      ]
-    }
-  }
-}
-```
-
-> **Note on Custom Devin Path**: If Devin Desktop is installed in a non-standard directory (e.g. `E:\Program\devin`), specify `DEVIN_PATH` in `env`:
+> **自定义 Devin 路径提示**：如果你的 Devin Desktop 安装在非系统盘路径（如 `E:\Program\devin`），可通过 `DEVIN_PATH` 环境变量指定：
 > ```json
 > {
 >   "mcpServers": {
@@ -122,110 +159,68 @@ Add to `.cursor/mcp.json` or `.codebuddy/mcp.json` (or Global Settings):
 > }
 > ```
 
----
+### 提供的 MCP 工具清单
 
-## Environment Variables
-
-| Variable | Default | Description |
+| 工具名称 | 功能说明 | 核心参数 |
 | :--- | :--- | :--- |
-| `DEVIN_PATH` | *(auto-discovered)* | Custom absolute path to `devin.exe` or `devin` executable |
-| `DEVIN_API_KEY` | *(auto-discovered)* | Override Devin Session Token or API Key |
-| `WINDSURF_API_KEY` | *(auto-discovered)* | Fallback API Key compatibility |
-| `DEVIN_TIMEOUT_MS` | `35000` | Search/Fetch timeout in milliseconds |
+| **`devin_web_search`** | 全网实时搜索，返回结构化标题、链接及摘要 | `query` (必填), `num_results` (默认5), `detailed` (详细总结) |
+| **`devin_web_fetch`** | 深度阅读并清洗指定网页正文，去除无关噪音 | `url` (必填), `extract_mode` (`markdown`/`text`/`summary`) |
+| **`extract_devin_key`** | 跨平台自动提取本地 Devin / Windsurf API Key | 无需参数 |
+| **`devin_status`** | 诊断工具: 检查本地 Devin 引擎路径与登录身份 | 无需参数 |
 
----
-
-## MCP Tools
-
-### `devin_web_search`
-
-AI-driven real-time web search with structured output.
-
-| Parameter | Type | Required | Default | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| `query` | string | **Yes** | — | Natural language search query or keywords |
-| `num_results` | integer | No | `5` | Maximum number of results to return (1-15) |
-| `detailed` | boolean | No | `false` | If `true`, includes an in-depth AI synthesis summary alongside sources |
-
-**Example output:**
+#### 工具调用返回示范 (`devin_web_search`)
 
 ```json
 [
   {
     "title": "Announcing Vue 3.5 | The Vue Point",
     "url": "https://blog.vuejs.org/posts/vue-3-5",
-    "snippet": "Vue 3.5 includes reactive props destructure, 56% memory optimization..."
+    "snippet": "Vue 3.5 带来了响应式系统重大重构，内存占用降低 56%，Reactive Props 解构现已稳定..."
   }
 ]
 ```
 
-### `devin_web_fetch`
+### 环境变量说明
 
-Deep webpage scraping and reader that cleans away advertisements, navigation bars, and cookie banners.
+| 环境变量 | 默认值 | 作用说明 |
+| :--- | :--- | :--- |
+| `DEVIN_PATH` | *(自动探测)* | 自定义指定的 `devin.exe` 或 `devin` 可执行文件绝对路径 |
+| `DEVIN_API_KEY` | *(自动探测)* | 显式覆盖 Devin Session Token 或 API Key |
+| `DEVIN_TIMEOUT_MS` | `35000` | 搜索与抓取的超时毫秒数 |
 
-| Parameter | Type | Required | Default | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| `url` | string | **Yes** | — | Target webpage URL (http:// or https://) |
-| `extract_mode` | string | No | `"markdown"` | Output format: `"markdown"`, `"text"`, or `"summary"` |
+### 🤖 面向 AI 助手的一键自愈部署指南
 
-### `extract_devin_key`
+> **如果你是正在阅读此仓库的 AI 助手（Claude, Cursor, CodeBuddy, Cline 等）：**
+> 1. 请自动识别用户当前的客户端配置文件路径（例如 `.codebuddy/mcp.json` 或 `.cursor/mcp.json`）；
+> 2. 自动在 `"mcpServers"` 下写入 `"devin-search": { "command": "npx", "args": ["-y", "devin-search-mcp"] }`；
+> 3. 无需让用户手动输入命令或登录，一切凭证均为本地自动识别；
+> 4. 详细的 AI 规范可参阅 [AI_PROMPT.md](AI_PROMPT.md)。
 
-Auto-extract Devin API Key / Session Token from local installation. Matches `fast-context-mcp`'s `extract_windsurf_key`.
-
-```text
-Devin API Key extracted successfully
-
-  Key: devin-session-token$eyJhbGciOi...
-  Length: 189
-  Source: C:\Users\admin\AppData\Roaming\devin\credentials.toml
-  App: Devin
-
-Usage:
-  export DEVIN_API_KEY="devin-session-token$..."
-```
-
-### `devin_status`
-
-Diagnostic tool: returns local engine path, login identity, and workspace trust status.
-
----
-
-## For AI Agents: Auto-Deployment Instructions
-
-> 🤖 **If you are an AI Assistant reading this repository to configure MCP for your user:**
-> 1. Locate the user's MCP config file (e.g. `~/.claude.json`, `%APPDATA%\Claude\claude_desktop_config.json`, or `.cursor/mcp.json`).
-> 2. Add the server entry: `"devin-search": { "command": "npx", "args": ["-y", "devin-search-mcp"] }`.
-> 3. No manual user login is needed if Devin is installed on the host.
-> 4. For full instruction details, see [AI_PROMPT.md](AI_PROMPT.md).
-
----
-
-## Project Structure
+### 项目工程结构
 
 ```text
 devin-search-mcp/
 ├── bin/
-│   └── devin-search-mcp.mjs      # Stdio entry point for MCP clients
+│   └── devin-search-mcp.mjs      # 命令行可执行入口 (stdio)
 ├── src/
-│   ├── index.mjs                 # MCP Server instance & tool handlers
-│   ├── detector.mjs              # Multi-platform Devin executable discovery
-│   ├── extract-key.mjs           # SQLite (sql.js) & TOML credential extraction
-│   ├── search.mjs                # web_search execution & structured parsing
-│   ├── fetch.mjs                 # webfetch content cleaner & reader
-│   ├── response-repair.mjs       # Bracket-balancing & JSON error repair
-│   └── cache.mjs                 # In-memory MD5/TTL result cache
+│   ├── index.mjs                 # MCP Server 实例与工具路由
+│   ├── detector.mjs              # Devin 本地安装与凭证自动探测
+│   ├── extract-key.mjs           # SQLite (sql.js) 与 TOML 凭据提取
+│   ├── search.mjs                # web_search 真实网络搜索与结构化解析
+│   ├── fetch.mjs                 # webfetch 网页深度抓取与正文清洗
+│   ├── response-repair.mjs       # 括号深度平衡与 JSON 自动修复容错
+│   └── cache.mjs                 # 轻量级 MD5 / TTL 搜索结果缓存
 ├── .github/
-│   └── workflows/publish.yml     # Automated CI/CD release pipeline
-├── AI_PROMPT.md                  # Machine-readable deployment guide for AI
+│   └── workflows/publish.yml     # 自动化 CI/CD npm 发版流水线
+├── AI_PROMPT.md                  # 专供 AI 自动阅读与部署的引导文档
 ├── package.json
-├── test.mjs                      # E2E integration test
-├── test-mcp-protocol.mjs         # Stdio JSON-RPC protocol test
+├── test.mjs                      # 端到端业务逻辑测试
+├── test-mcp-protocol.mjs         # 真实的 MCP stdio 协议模拟测试
 ├── README.md
 └── LICENSE
 ```
 
----
+### 开源协议
 
-## License
+本项目采用 [MIT 许可证](LICENSE)。
 
-MIT License © 2026 suvon
