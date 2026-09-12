@@ -1,6 +1,6 @@
 {
   "name": "devin-search-mcp",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Devin AI 驱动的联网搜索与网页抓取 MCP 服务 (基于 Devin Desktop / CLI)",
   "main": "src/index.mjs",
   "type": "module",

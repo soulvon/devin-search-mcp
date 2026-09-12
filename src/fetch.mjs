@@ -14,7 +14,11 @@ import { searchCache } from "./cache.mjs";
  * @param {"markdown"|"text"|"summary"} [options.extractMode="markdown"] - 提取格式
  * @param {number} [options.timeoutMs=35000] - 超时毫秒数
  */
-export async function executeWebFetch({ url, extractMode = "markdown", timeoutMs = 35000 }) {
+export async function executeWebFetch({
+  url,
+  extractMode = "markdown",
+  timeoutMs = parseInt(process.env.DEVIN_TIMEOUT_MS || "60000", 10),
+}) {
   if (!url || typeof url !== "string" || !/^https?:\/\//i.test(url)) {
     throw new Error("请提供有效的 HTTP/HTTPS 网页 URL");
   }

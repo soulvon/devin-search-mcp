@@ -140,19 +140,21 @@ export function inspectDevinStatus() {
       authStatusText = execFileSync(executable, ["auth", "status"], {
         encoding: "utf-8",
         stdio: ["pipe", "pipe", "pipe"],
-        timeout: 5000,
+        timeout: 15000,
       }).trim();
     } catch (err) {
       authStatusText = err.stdout || err.message;
     }
   }
 
+  const isLoggedIn = authStatusText.includes("Logged in") || hasToken;
+
   return {
     executable,
     credentialsPath,
     hasToken,
     tokenSnippet,
-    isLoggedIn: authStatusText.includes("Logged in"),
+    isLoggedIn,
     statusSummary: authStatusText,
   };
 }

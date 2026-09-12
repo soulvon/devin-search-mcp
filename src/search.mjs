@@ -40,7 +40,7 @@ export async function executeWebSearch({
   query,
   num_results = 5,
   detailed = false,
-  timeoutMs = 35000,
+  timeoutMs = parseInt(process.env.DEVIN_TIMEOUT_MS || "60000", 10),
   maxRetries = 1,
 }) {
   if (!query || typeof query !== "string") {
