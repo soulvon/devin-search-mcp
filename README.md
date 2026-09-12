@@ -2,55 +2,78 @@
 
 [![npm version](https://img.shields.io/npm/v/devin-search-mcp.svg)](https://www.npmjs.com/package/devin-search-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node: >=18](https://img.shields.io/badge/Node.js->=18-green.svg)](https://nodejs.org/)
 
-基于 Devin 原生引擎的 AI 联网网页搜索与深度抓取 MCP (Model Context Protocol) 插件。
+AI-driven real-time Web Search and Web Fetch as an MCP tool — powered by Devin AI's developer-focused search gateway.
 
-项目整体设计与工程规范深度对齐 `@sammysnake/fast-context-mcp`，支持跨平台本地凭证自动提取、健壮的模型输出修复、全网实时搜索与智能正文清洗。
-
----
-
-## 特性亮点
-
-* **全网实时搜索 (`devin_web_search`)**：直接使用 Devin 官方针对开发者深度优化的搜索网关，获取最新的开源项目、技术文档、版本发布与报错解决方案。
-* **本地凭证自动提取 (`extract_devin_key`)**：深度模仿 `fast-context-mcp`，依赖 `sql.js`（纯 WASM/JS）自动扫描 `state.vscdb` 和 `credentials.toml`，一键导出有效凭据。
-* **深度网页正文抓取 (`devin_web_fetch`)**：自动剔除网页广告、导航、页脚等噪声，返回整洁的 Markdown 格式。
-* **响应自动修复与容错 (`response-repair`)**：内置括号深度平衡与畸形 JSON 自动修复算法，避免大模型输出解析崩溃。
-* **智能缓存加速 (`cache`)**：内置基于 MD5 与 TTL 的轻量缓存，相同搜索毫秒级返回，节约配额并加速响应。
-* **CI/CD 全自动发布**：配置了 GitHub Actions 自动化发布工作流，开箱即支持一键发包到 npm。
+Any MCP-compatible client (**Claude Code, Claude Desktop, Cursor, CodeBuddy, Windsurf, Cline**, etc.) can use this to search the open web with natural language and fetch clean webpage content without noise.
 
 ---
 
-## 提供的 MCP 工具
+## How It Works
 
-| 工具名称 | 功能描述 | 关键参数 |
-| :--- | :--- | :--- |
-| `devin_web_search` | 执行全网实时搜索，返回结构化网页列表及摘要 | `query` (必需), `num_results`, `detailed` |
-| `devin_web_fetch` | 抓取并阅读指定网址的深度清洁正文 | `url` (必需), `extract_mode` (`markdown`/`text`/`summary`) |
-| `extract_devin_key` | 跨平台自动提取本地 Devin / Windsurf API Key | 无 |
-| `devin_status` | 诊断检测本地 Devin 安装路径、登录身份与可用性状态 | 无 |
+```text
+You: "What's new in Next.js 15 and how to migrate?"
+         │
+         ▼
+┌────────────────────────────────────────────────────────┐
+│                   Devin Search MCP                     │
+│                  (Local MCP Server)                    │
+│                                                        │
+│  1. Auto-detects local Devin engine & credentials      │
+│  2. Translates query into optimal search parameters    │
+│  3. Invokes Devin's developer-tuned web_search engine  │
+│  4. Parses results with bracket-balanced repair        │
+│  5. Strips noise, navbars & ads (webfetch)             │
+│  6. Caches results in-memory with TTL                  │
+│  7. Returns clean structured JSON / Markdown           │
+└────────────────────────────────────────────────────────┘
+         │
+         ▼
+Found 5 relevant results.
+  [1/5] Next.js 15 Release Notes (https://nextjs.org/blog/next-15)
+  [2/5] Upgrade Guide: v14 to v15 (https://nextjs.org/docs/app/building-your-application/upgrading/version-15)
+  [3/5] React 19 RC Integration Notes...
+
+[config] query="Next.js 15 migration", latency=650ms, cached=false
+```
 
 ---
 
-## 快速配置使用
+## Prerequisites
 
-在任意 AI 客户端（如 CodeBuddy、Claude Desktop、Cursor 等）的 MCP 配置文件中添加：
+* **Node.js** >= 18
+* **Devin account** — Free tier works (auto-extracts credentials from local installation)
+* Works on **macOS**, **Windows**, and **Linux**
 
-### 本地路径运行方式
+---
+
+## Quick Setup (Recommended)
+
+No installation required! Use `npx` directly in your MCP client configuration.
+
+### 1. Claude Code (CLI)
+
+Add to `~/.claude.json` under `mcpServers`:
 
 ```json
 {
-  "mcpServers": {
-    "devin-search": {
-      "command": "node",
-      "args": [
-        "E:\\project\\devin-search-mcp\\bin\\devin-search-mcp.mjs"
-      ]
-    }
+  "devin-search": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "devin-search-mcp"
+    ]
   }
 }
 ```
 
-### npm 发布后的运行方式 (与 fast-context-mcp 一致)
+### 2. Claude Desktop
+
+Add to `claude_desktop_config.json` under `mcpServers`:
+
+* **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+* **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
 ```json
 {
@@ -66,36 +89,143 @@
 }
 ```
 
+### 3. Cursor / CodeBuddy
+
+Add to `.cursor/mcp.json` or `.codebuddy/mcp.json` (or Global Settings):
+
+```json
+{
+  "mcpServers": {
+    "devin-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "devin-search-mcp"
+      ]
+    }
+  }
+}
+```
+
+> **Note on Custom Devin Path**: If Devin Desktop is installed in a non-standard directory (e.g. `E:\Program\devin`), specify `DEVIN_PATH` in `env`:
+> ```json
+> {
+>   "mcpServers": {
+>     "devin-search": {
+>       "command": "npx",
+>       "args": ["-y", "devin-search-mcp"],
+>       "env": {
+>         "DEVIN_PATH": "E:\\Program\\devin\\resources\\app\\extensions\\windsurf\\devin\\bin\\devin.exe"
+>       }
+>     }
+>   }
+> }
+> ```
+
 ---
 
-## 验证与测试
+## Environment Variables
 
-```bash
-cd E:\project\devin-search-mcp
+| Variable | Default | Description |
+| :--- | :--- | :--- |
+| `DEVIN_PATH` | *(auto-discovered)* | Custom absolute path to `devin.exe` or `devin` executable |
+| `DEVIN_API_KEY` | *(auto-discovered)* | Override Devin Session Token or API Key |
+| `WINDSURF_API_KEY` | *(auto-discovered)* | Fallback API Key compatibility |
+| `DEVIN_TIMEOUT_MS` | `35000` | Search/Fetch timeout in milliseconds |
 
-# 运行底层业务功能测试 (搜索与抓取)
-npm test
+---
 
-# 运行真实的 MCP 客户端 Stdio 协议模拟测试
-npm run test:mcp
+## MCP Tools
+
+### `devin_web_search`
+
+AI-driven real-time web search with structured output.
+
+| Parameter | Type | Required | Default | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `query` | string | **Yes** | — | Natural language search query or keywords |
+| `num_results` | integer | No | `5` | Maximum number of results to return (1-15) |
+| `detailed` | boolean | No | `false` | If `true`, includes an in-depth AI synthesis summary alongside sources |
+
+**Example output:**
+
+```json
+[
+  {
+    "title": "Announcing Vue 3.5 | The Vue Point",
+    "url": "https://blog.vuejs.org/posts/vue-3-5",
+    "snippet": "Vue 3.5 includes reactive props destructure, 56% memory optimization..."
+  }
+]
+```
+
+### `devin_web_fetch`
+
+Deep webpage scraping and reader that cleans away advertisements, navigation bars, and cookie banners.
+
+| Parameter | Type | Required | Default | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `url` | string | **Yes** | — | Target webpage URL (http:// or https://) |
+| `extract_mode` | string | No | `"markdown"` | Output format: `"markdown"`, `"text"`, or `"summary"` |
+
+### `extract_devin_key`
+
+Auto-extract Devin API Key / Session Token from local installation. Matches `fast-context-mcp`'s `extract_windsurf_key`.
+
+```text
+Devin API Key extracted successfully
+
+  Key: devin-session-token$eyJhbGciOi...
+  Length: 189
+  Source: C:\Users\admin\AppData\Roaming\devin\credentials.toml
+  App: Devin
+
+Usage:
+  export DEVIN_API_KEY="devin-session-token$..."
+```
+
+### `devin_status`
+
+Diagnostic tool: returns local engine path, login identity, and workspace trust status.
+
+---
+
+## For AI Agents: Auto-Deployment Instructions
+
+> 🤖 **If you are an AI Assistant reading this repository to configure MCP for your user:**
+> 1. Locate the user's MCP config file (e.g. `~/.claude.json`, `%APPDATA%\Claude\claude_desktop_config.json`, or `.cursor/mcp.json`).
+> 2. Add the server entry: `"devin-search": { "command": "npx", "args": ["-y", "devin-search-mcp"] }`.
+> 3. No manual user login is needed if Devin is installed on the host.
+> 4. For full instruction details, see [AI_PROMPT.md](AI_PROMPT.md).
+
+---
+
+## Project Structure
+
+```text
+devin-search-mcp/
+├── bin/
+│   └── devin-search-mcp.mjs      # Stdio entry point for MCP clients
+├── src/
+│   ├── index.mjs                 # MCP Server instance & tool handlers
+│   ├── detector.mjs              # Multi-platform Devin executable discovery
+│   ├── extract-key.mjs           # SQLite (sql.js) & TOML credential extraction
+│   ├── search.mjs                # web_search execution & structured parsing
+│   ├── fetch.mjs                 # webfetch content cleaner & reader
+│   ├── response-repair.mjs       # Bracket-balancing & JSON error repair
+│   └── cache.mjs                 # In-memory MD5/TTL result cache
+├── .github/
+│   └── workflows/publish.yml     # Automated CI/CD release pipeline
+├── AI_PROMPT.md                  # Machine-readable deployment guide for AI
+├── package.json
+├── test.mjs                      # E2E integration test
+├── test-mcp-protocol.mjs         # Stdio JSON-RPC protocol test
+├── README.md
+└── LICENSE
 ```
 
 ---
 
-## 如何发布到 npm
+## License
 
-1. **登录 npm**：
-   ```bash
-   npm login
-   ```
-2. **发布公有包**：
-   ```bash
-   npm publish --access public
-   ```
-3. **GitHub Actions 自动发布**：
-   在 GitHub 仓库中配置 Secret `NPM_TOKEN`，每次创建 Release Tag 时会自动触发打包发布。
-
----
-
-## 许可证
-MIT License
+MIT License © 2026 suvon
