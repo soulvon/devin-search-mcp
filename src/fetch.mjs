@@ -1,7 +1,7 @@
 /**
  * Devin 网页抓取与阅读模块
- * 调用 Devin CLI 的 webfetch 工具提取指定网页的清洁正文
- * 支持 retryable 错误自动重试与原生网络抓取兜底
+ * 严格调用 Devin CLI 的 webfetch 官方能力提取正文
+ * 遵循 Debug-First 准则：仅处理 retryable 官方重试，绝不引入隐式回退或静默降级代码，彻底暴露底层真实异常
  */
 
 import { execFile } from "node:child_process";
@@ -9,70 +9,18 @@ import { findDevinExecutable } from "./detector.mjs";
 import { searchCache } from "./cache.mjs";
 
 /**
- * 极简 HTML 清洗工具 (原生兜底用)
- */
-function cleanHtmlToMarkdown(html) {
-  let text = html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-    .replace(/<nav\b[^<]*(?:(?!<\/nav>)<[^<]*)*<\/nav>/gi, "")
-    .replace(/<footer\b[^<]*(?:(?!<\/footer>)<[^<]*)*<\/footer>/gi, "");
-
-  // 简易转换为 Markdown
-  text = text
-    .replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, "\n# $1\n")
-    .replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, "\n## $1\n")
-    .replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, "\n### $1\n")
-    .replace(/<p[^>]*>([\s\S]*?)<\/p>/gi, "\n$1\n")
-    .replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, "\n* $1")
-    .replace(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, "[$2]($1)")
-    .replace(/<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/gi, "\n```\n$1\n```\n")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/\n\s*\n\s*\n/g, "\n\n")
-    .trim();
-
-  return text;
-}
-
-/**
- * 原生 Fetch 极速抓取兜底
- */
-async function nativeFetchFallback(url) {
-  const resp = await fetch(url, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    },
-    signal: AbortSignal.timeout(20000),
-  });
-
-  if (!resp.ok) {
-    throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
-  }
-
-  const html = await resp.text();
-  return cleanHtmlToMarkdown(html);
-}
-
-/**
  * 抓取指定 URL 的网页内容
  * @param {Object} options
  * @param {string} options.url - 目标网页 URL
  * @param {"markdown"|"text"|"summary"} [options.extractMode="markdown"] - 提取格式
  * @param {number} [options.timeoutMs=60000] - 超时毫秒数
- * @param {number} [options.maxRetries=2] - 重试次数
+ * @param {number} [options.maxRetries=1] - retryable 瞬时网络错误重试次数
  */
 export async function executeWebFetch({
   url,
   extractMode = "markdown",
   timeoutMs = parseInt(process.env.DEVIN_TIMEOUT_MS || "60000", 10),
-  maxRetries = 2,
+  maxRetries = 1,
 }) {
   if (!url || typeof url !== "string" || !/^https?:\/\//i.test(url)) {
     throw new Error("请提供有效的 HTTP/HTTPS 网页 URL");
@@ -85,6 +33,9 @@ export async function executeWebFetch({
   }
 
   const devinExe = findDevinExecutable();
+  if (!devinExe) {
+    throw new Error("未检测到本地 Devin 安装，请确认已安装 Devin 或配置 DEVIN_PATH 环境变量。");
+  }
 
   let prompt = "";
   if (extractMode === "summary") {
@@ -111,7 +62,7 @@ export async function executeWebFetch({
             if (error.killed) {
               reject(new Error(`网页读取超时（超过 ${timeoutMs / 1000} 秒）: ${url}`));
             } else {
-              reject(new Error(`${error.message}\n${stderr || ""}`));
+              reject(new Error(error.message + (stderr ? `\n${stderr}` : "")));
             }
             return;
           }
@@ -123,32 +74,27 @@ export async function executeWebFetch({
   let output = "";
   let lastErr = null;
 
-  if (devinExe) {
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        output = await runDevinAttempt();
-        if (output) break;
-      } catch (err) {
-        lastErr = err;
-        // 如果是可重试的频控错误，进行指数退避
-        if (/resource_exhausted|retryable|ETIMEDOUT/i.test(err.message)) {
-          if (attempt < maxRetries) {
-            await new Promise((r) => setTimeout(r, 1500 * (attempt + 1)));
-            continue;
-          }
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      output = await runDevinAttempt();
+      if (output) break;
+    } catch (err) {
+      lastErr = err;
+      // 仅当官方返回 retryable: true 或连接瞬时重置时做退避重试
+      if (/retryable|ETIMEDOUT|ECONNRESET/i.test(err.message)) {
+        if (attempt < maxRetries) {
+          await new Promise((r) => setTimeout(r, 2000));
+          continue;
         }
-        break;
       }
+      // 非 retryable 错误不盲目重试，立即向上抛出
+      throw err;
     }
   }
 
-  // 如果 Devin 暂时频控或遇到网络故障，自动无缝降级走本地原生 fetch 提取
+  // 彻底暴露问题：如果没有产出，坚决抛出真实异常，严禁任何伪造成功或隐式本地降级
   if (!output) {
-    try {
-      output = await nativeFetchFallback(url);
-    } catch (fallbackErr) {
-      throw new Error(`网页抓取失败: ${lastErr?.message || fallbackErr.message}`);
-    }
+    throw lastErr || new Error(`Devin 抓取网页未返回任何内容: ${url}`);
   }
 
   const resultPayload = {
