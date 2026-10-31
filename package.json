@@ -1,7 +1,7 @@
 {
   "name": "devin-search-mcp",
   "version": "2.0.0",
-  "description": "极速全网实时检索与网页抓取 MCP 服务，直连 Devin 官方网关，零大模型消耗，零本地进程 (支持 Cursor, Claude, CodeBuddy)",
+  "description": "Blazing-fast real-time web search & clean webpage fetch as a standard MCP — Devin native gateway, ~1s response, zero LLM quota (Cursor, Claude, CodeBuddy)",
   "main": "src/index.mjs",
   "type": "module",
   "bin": {
@@ -21,12 +21,17 @@
   ],
   "keywords": [
     "mcp",
+    "mcp-server",
+    "model-context-protocol",
     "devin",
     "web-search",
-    "search",
     "webfetch",
+    "search",
+    "claude",
+    "cursor",
+    "codebuddy",
     "ai",
-    "claude"
+    "developer-tools"
   ],
   "author": "suvon",
   "publishConfig": {
