@@ -37,6 +37,7 @@ const INTERNAL_PATHS = [
   ['devloop.project.json', '本机工具绑定', false],
 ];
 const INTERNAL_PATTERNS = [
+  [/^test[-_]?.+\.mjs$/i, '本地联调自测脚本（需本机凭证）'],
   [/^[^/]*alive\d*\.(json|zip)$/i, '账号池导出'],
   [/^.*\.(vsix|tgz)$/i, '本地构建产物'],
 ];
