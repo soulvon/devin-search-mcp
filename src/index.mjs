@@ -83,7 +83,17 @@ export function createDevinSearchServer() {
       if (name === "extract_devin_key") {
         const r = await extractDevinKey();
         if (!r.api_key) {
-          return { content: [{ type: "text", text: "未在本地找到有效的 Devin 凭证，请确认 Devin Desktop 已登录。" }] };
+          return { content: [{ type: "text", text: [
+          "❌ 未在本地找到有效的 Devin 登录凭证。",
+          "",
+          "本工具依赖本机 Devin Desktop 的登录凭证（免费）：",
+          "  1. 下载安装 Devin Desktop → https://devin.ai/download",
+          "  2. 注册/登录一次（免费账号即可）",
+          "  3. 凭证将自动提取，无需任何配置",
+          "",
+          r.source ? "已扫描来源: " + r.source + " (存在但未提取到有效 Key)" : "已扫描: ~/.devin/credentials.toml / Windsurf state.vscdb 等常见位置",
+          "已安装仍报错？确认 Devin Desktop 已登录且为最新版。"
+        ].join("\n") }] };
         }
         return {
           content: [{

@@ -15,6 +15,9 @@
 
 [简体中文](#-简体中文) | [English](#-english) | [同系列作品](#-同系列作品--more-from-soulvon)
 
+> [!WARNING]
+> **前置要求**：本工具依赖本机 [Devin Desktop](https://devin.ai/download) 的登录凭证（免费注册即可）。装过 + 登录过一次，MCP 会自动提取凭证，无需任何配置。**没有 Devin 账号？免费注册 → https://devin.ai**
+
 </div>
 
 ---
@@ -164,6 +167,9 @@ claude mcp add devin-search -- npx -y devin-search-mcp
 ---
 
 ## 🌐 English
+
+> [!WARNING]
+> **Prerequisite**: requires [Devin Desktop](https://devin.ai/download) installed and logged in once on this machine (free). Credentials are extracted automatically — zero configuration. **No Devin account? Register free → https://devin.ai**
 
 **Your AI is brilliant — and it lives in a training cutoff.**
 
