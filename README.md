@@ -298,6 +298,16 @@ For full AI agent machine instructions, check [AI_PROMPT.md](AI_PROMPT.md).
 
 ---
 
+---
+
+## ⭐ Star History
+
+**如果这个工具帮到了你，点一个 Star 让更多开发者看到它 · If this project helps you, a star means a lot.**
+
+[![Star History Chart](https://api.star-history.com/svg?repos=soulvon/soulvon/devin-search-mcp&type=Date)](https://star-history.com/#soulvon/soulvon/devin-search-mcp&Date)
+
+---
+
 ## License
 
 MIT License © 2026 soulvon
