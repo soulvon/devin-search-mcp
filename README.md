@@ -188,6 +188,7 @@ For full AI agent machine instructions, check [AI_PROMPT.md](AI_PROMPT.md).
 | :--- | :--- |
 | [🚀 **AnyBridge**](https://github.com/soulvon/AnyBridge) ![Downloads](https://img.shields.io/github/downloads/soulvon/AnyBridge/total?color=orange) | BYOK 模型接入工作台：统一管理 16+ AI 编程智能体（Cursor / Windsurf / Devin / Claude Code / Codex / CodeBuddy 等）的模型渠道，本地代理接管 + 配置直写 · Unified BYOK model access for 16+ AI coding agents |
 | [🪁 **Kite**](https://github.com/soulvon/Kite) ![Downloads](https://img.shields.io/github/downloads/soulvon/Kite/total?color=orange) | Windsurf / Devin 多账号号池与 AI IDE 增强套件：额度监控、耗尽自动切换、多实例分身 · Multi-account pool & IDE enhancement suite for Windsurf / Devin |
+| [🛸 **Antigravity-Kite**](https://github.com/soulvon/Antigravity-Kite) ![Downloads](https://img.shields.io/github/downloads/soulvon/Antigravity-Kite/total?color=orange) | Antigravity 多账号无感切号与号池管理：Claude / Gemini 双模型双窗口官方配额（5h+Weekly 带重置倒计时）、安全声明自动确认、双语自适应 · Seamless multi-account switcher & pool for Antigravity IDE |
 | [🎫 **BuddyRelay**](https://github.com/soulvon/BuddyRelay) ![Open VSX Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fopen-vsx.org%2Fapi%2Fsoulvon%2Fbuddy-relay&query=%24.downloadCount&label=openvsx%20downloads&color=orange) | CodeBuddy / WorkBuddy 多账号切换插件：多窗口号池同步、额度流水对账、自动切号，已上架 Open VSX · Multi-account switcher extension for CodeBuddy / WorkBuddy |
 
 > 全部开源 · 本地优先 · 持续维护 —— 前往 [作者主页](https://github.com/soulvon) 查看全部项目 · All open source, local-first — see the [author profile](https://github.com/soulvon) for all projects.
