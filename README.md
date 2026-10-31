@@ -13,7 +13,7 @@
 
 **没有重客户端 · 没有验证码 · 没有模型推理 · 没有配置向导**
 
-[简体中文](#-简体中文) | [English](#-english) | [同系列作品](#-同系列作品--more-from-soulvon)
+[English](README_en.md) • [简体中文](README.md)
 
 > [!WARNING]
 > **前置要求**：本工具依赖本机 [Devin Desktop](https://devin.ai/download) 的登录凭证（免费注册即可）。装过 + 登录过一次，MCP 会自动提取凭证，无需任何配置。**没有 Devin 账号？免费注册 → https://devin.ai**
@@ -21,8 +21,6 @@
 </div>
 
 ---
-
-## 🇨🇳 简体中文
 
 **你的 AI 很强，但它活在训练截止日。**
 
@@ -163,129 +161,6 @@ claude mcp add devin-search -- npx -y devin-search-mcp
 > 2. 将 `"devin-search": { "command": "npx", "args": ["-y", "devin-search-mcp"] }` 直接注入到配置文件的 `"mcpServers"` 节点下；
 > 3. 不需要让用户输入任何账号密码或跑配置向导，本地已登录状态会自动识别；
 > 4. 详细的 AI 自动化规则见 [AI_PROMPT.md](AI_PROMPT.md)。
-
----
-
-## 🌐 English
-
-> [!WARNING]
-> **Prerequisite**: requires [Devin Desktop](https://devin.ai/download) installed and logged in once on this machine (free). Credentials are extracted automatically — zero configuration. **No Devin account? Register free → https://devin.ai**
-
-**Your AI is brilliant — and it lives in a training cutoff.**
-
-Ask what a framework shipped last week? It hallucinates, confidently. Hand it a doc link? It can't reach the web — or fetches a wall of ads.
-
-The usual fixes are worse: scrapers die on CAPTCHAs, fetched pages are 80% navigation junk, and parsing one page burns one LLM call.
-
-**We cut the entire chain.**
-
-Devin Desktop ships one of the cleanest tech-search channels in the market — officially curated, no CAPTCHAs, straight to content. Locked inside the Devin client.
-
-**This project pried it out**: reverse-engineered Devin's native binary protocol, Node.js speaking raw Protobuf straight to the official retrieval gateway. Your Cursor / CodeBuddy / Claude now search the web exactly like Devin does.
-
-### ⚡ By the numbers
-
-| | Scraper + LLM parsing | 🔍 Devin Search MCP |
-| :--- | :--- | :--- |
-| **Response time** | 3 – 10 s | **~1 s** |
-| **Model tokens** | One LLM call per page | **0 (native RPC, zero inference)** |
-| **CAPTCHAs** | Daily | **None** |
-| **Data cleanliness** | HTML wreckage | **Structured JSON / Markdown** |
-| **Local dependency** | Heavy client process | **Zero processes** |
-| **Setup** | Apply for an API key | **One `npx` line, live in 30 s** |
-
-### 🎬 What it looks like
-
-```bash
-You: "What are the breaking changes in Next.js 15 Server Actions?"
-
-  ⚡ devin_web_search("Next.js 15 Server Actions breaking changes")
-  ✓ 1.2s · 5 results · 0 tokens
-
-  [1] Next.js 15 upgrade guide — nextjs.org
-  [2] React 19 & Async Request APIs changes — react.dev
-  [3] Server Actions migration in practice — blog.example.dev
-
-You: "Fetch #1 and read it closely"
-  ⚡ devin_web_fetch("https://nextjs.org/docs/...", extract_mode="markdown")
-  ✓ 0.8s · 4,200 words of clean text · ads & nav stripped
-```
-
-### 🔬 How it works
-
-```text
-┌────────────────────────────────────────────────────────┐
-│           Devin Search MCP (native-speed build)        │
-│              (a lightweight local service)             │
-│                                                        │
-│  1. Extract the local Devin login token (sql.js)       │
-│  2. Exchange it for a JWT (cached in memory)           │
-│  3. Build binary Protobuf packets → native gateway     │
-│  4. Parse the binary stream into title/URL/snippet     │
-│  5. Cache hit? Answer instantly. Miss? Fetch & store   │
-└────────────────────────────────────────────────────────┘
-```
-
-**No heavy client. No LLM in the middle. Just one layer of Protobuf.**
-
-### 🚀 Quick start
-
-**CodeBuddy / Cursor** — in your MCP config (`mcp.json` / `.cursor/mcp.json`):
-
-```json
-{
-  "mcpServers": {
-    "devin-search": {
-      "command": "npx",
-      "args": ["-y", "devin-search-mcp"]
-    }
-  }
-}
-```
-
-**Claude Desktop** — same `mcpServers` block in `claude_desktop_config.json`, then restart.
-
-**Claude Code (CLI)**:
-
-```bash
-claude mcp add devin-search -- npx -y devin-search-mcp
-```
-
-### 🧰 Three tools
-
-| Tool | Capability | Key parameters |
-| :--- | :--- | :--- |
-| **`devin_web_search`** | Native ultra-fast web search, returns structured `title + url + snippet` | `query` (required), `num_results` (default 5), `detailed` |
-| **`devin_web_fetch`** | Deep page reader — strips ads, popups and navbars | `url`, `extract_mode` (`markdown` default / `text`) |
-| **`extract_devin_key`** | Cross-platform extraction of the locally active Devin / Windsurf token | Same UX as `fast-context-mcp`'s `extract_windsurf_key` |
-
-### FAQ
-
-<details>
-<summary><b>Do I need Devin Desktop installed?</b></summary>
-<br>
-Yes — it talks to Devin's official gateway, and credentials come from your locally logged-in Devin Desktop. Install once, log in once, then it's fully automatic.
-</details>
-
-<details>
-<summary><b>Why not just scrape Google / Bing?</b></summary>
-<br>
-Public scrapers get CAPTCHA-walled daily. Devin's internal retrieval channel is officially curated for technical Q&A and developer docs — precision, cleanliness and speed are on another level.
-</details>
-
-<details>
-<summary><b>Is it really zero token consumption?</b></summary>
-<br>
-Yes. <code>devin_web_search</code> uses the native retrieval RPC — <b>no LLM inference anywhere</b>. Search happens on the gateway, parsing happens locally, your model quota is untouched.
-</details>
-
-<details>
-<summary><b>Does searching the same keyword twice hit the gateway again?</b></summary>
-<br>
-No. Repeat queries within the cache window return in 0 ms from memory; the cache re-fetches automatically when it expires.
-</details>
-
-For full AI agent machine instructions, check [AI_PROMPT.md](AI_PROMPT.md).
 
 ---
 
