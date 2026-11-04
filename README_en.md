@@ -17,8 +17,8 @@
 
 ---
 
-> [!WARNING]
-> **Prerequisite**: requires [Devin Desktop](https://devin.ai/download) installed and logged in once on this machine (free). Credentials are extracted automatically — zero configuration. **No Devin account? Register free → https://devin.ai**
+> [!TIP]
+> **🎉 No Desktop App Required**: One-click browser OAuth login is now supported! Run `npx devin-search-mcp login` to authenticate with Google / GitHub for free. If you already have Devin or Windsurf installed and logged in, it will also be detected automatically.
 
 **Your AI is brilliant — and it lives in a training cutoff.**
 
@@ -79,6 +79,19 @@ You: "Fetch #1 and read it closely"
 
 ### 🚀 Quick start
 
+#### Step 1: One-click OAuth login (no app required · first time only)
+
+If you don't have Devin Desktop installed, run this one-line command to authenticate in your browser for free:
+
+```bash
+npx devin-search-mcp login
+```
+
+A browser window will open supporting **Google / GitHub / Email login**. Once authorized, your credentials will be stored locally.  
+*(Note: If Devin Desktop or Windsurf is already installed and logged in, you can skip this step!)*
+
+#### Step 2: Add to your AI environment
+
 **CodeBuddy / Cursor** — in your MCP config (`mcp.json` / `.cursor/mcp.json`):
 
 ```json
@@ -113,7 +126,7 @@ claude mcp add devin-search -- npx -y devin-search-mcp
 <details>
 <summary><b>Do I need Devin Desktop installed?</b></summary>
 <br>
-Yes — it talks to Devin's official gateway, and credentials come from your locally logged-in Devin Desktop. Install once, log in once, then it's fully automatic.
+<b>Not anymore!</b> Version 2.1 introduces one-click browser OAuth: simply run <code>npx devin-search-mcp login</code> once in your terminal. If you do have Devin Desktop or Windsurf installed and logged in, credentials will also be extracted automatically.
 </details>
 
 <details>

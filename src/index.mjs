@@ -16,7 +16,7 @@ import { executeWebFetch } from "./fetch.mjs";
 
 export function createDevinSearchServer() {
   const server = new Server(
-    { name: "devin-search-mcp", version: "2.0.0" },
+    { name: "devin-search-mcp", version: "2.1.0" },
     { capabilities: { tools: {} } }
   );
 
@@ -84,15 +84,21 @@ export function createDevinSearchServer() {
         const r = await extractDevinKey();
         if (!r.api_key) {
           return { content: [{ type: "text", text: [
-          "❌ 未在本地找到有效的 Devin 登录凭证。",
+          "❌ 未检测到 Devin / Windsurf 登录凭证。",
           "",
-          "本工具依赖本机 Devin Desktop 的登录凭证（免费）：",
-          "  1. 下载安装 Devin Desktop → https://devin.ai/download",
-          "  2. 注册/登录一次（免费账号即可）",
-          "  3. 凭证将自动提取，无需任何配置",
+          "💡 本工具完全免费，无需安装任何桌面客户端，可通过以下方式之一授权使用：",
           "",
-          r.source ? "已扫描来源: " + r.source + " (存在但未提取到有效 Key)" : "已扫描: ~/.devin/credentials.toml / Windsurf state.vscdb 等常见位置",
-          "已安装仍报错？确认 Devin Desktop 已登录且为最新版。"
+          "  方式 1（推荐 · 免装客户端一键登录）：",
+          "    在终端运行: npx devin-search-mcp login",
+          "    （自动调起浏览器完成 Google / GitHub 一键登录，授权后自动保存凭证）",
+          "",
+          "  方式 2（环境变量直连）：",
+          "    配置环境变量 DEVIN_API_KEY=\"你的API_Key\"",
+          "",
+          "  方式 3（已有客户端无感读取）：",
+          "    若本机已安装 Devin Desktop 或 Windsurf，登录后凭证将自动提取，无需配置。",
+          "",
+          r.source ? "已扫描来源: " + r.source + " (存在但未提取到有效 Key)" : "已扫描: ~/.devin/credentials.toml / Windsurf state.vscdb 等常见位置"
         ].join("\n") }] };
         }
         return {

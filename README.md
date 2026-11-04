@@ -11,12 +11,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Node: >=18](https://img.shields.io/badge/Node.js->=18-green.svg)](https://nodejs.org/)
 
-**没有重客户端 · 没有验证码 · 没有模型推理 · 没有配置向导**
+**免装客户端 · 浏览器一键 OAuth · 没有验证码 · 0 Token 消耗**
 
 [English](README_en.md) • [简体中文](README.md)
 
-> [!WARNING]
-> **前置要求**：本工具依赖本机 [Devin Desktop](https://devin.ai/download) 的登录凭证（免费注册即可）。装过 + 登录过一次，MCP 会自动提取凭证，无需任何配置。**没有 Devin 账号？免费注册 → https://devin.ai**
+> [!TIP]
+> **🎉 全新免装客户端**：现已支持浏览器一键 OAuth 授权！无需下载安装 200MB+ 的桌面端，在终端运行 `npx devin-search-mcp login` 即可通过 Google / GitHub 免费一键登录并自动保存凭据；若本机已有已登录的 Devin / Windsurf，也会自动无感识别。
 
 </div>
 
@@ -81,7 +81,20 @@ Devin Desktop 内置的 `web_search` + `webfetch` 是市面上最干净的技术
 
 ### 🚀 30 秒上手
 
-#### 1. CodeBuddy / Cursor 用户
+#### 步骤 1：一键授权登录（免装客户端 · 仅需首次运行一次）
+
+如果你的电脑尚未安装 Devin 或 Windsurf 桌面客户端，只需在终端运行一次命令完成浏览器一键授权（完全免费）：
+
+```bash
+npx devin-search-mcp login
+```
+
+浏览器将自动弹出官方授权页面，支持 **Google / GitHub 一键登录** 或邮箱注册。授权成功后凭证将自动保存在本机标准目录，后续即可永久无感使用！  
+*(注：如果本机已有安装并登录过 Devin 或 Windsurf，可跳过此步，MCP 会自动无感提取)*
+
+#### 步骤 2：接入你的 AI 客户端
+
+##### CodeBuddy / Cursor 用户
 
 在 MCP 配置文件（CodeBuddy 为 `mcp.json`，Cursor 为 `.cursor/mcp.json`）中加入：
 
@@ -96,11 +109,11 @@ Devin Desktop 内置的 `web_search` + `webfetch` 是市面上最干净的技术
 }
 ```
 
-#### 2. Claude Desktop 用户
+##### Claude Desktop 用户
 
 `claude_desktop_config.json` 同样加入上面的 `mcpServers` 节点，重启客户端即可。
 
-#### 3. Claude Code (命令行版) 用户
+##### Claude Code (命令行版) 用户
 
 ```bash
 claude mcp add devin-search -- npx -y devin-search-mcp
@@ -129,9 +142,9 @@ claude mcp add devin-search -- npx -y devin-search-mcp
 ### ❓ FAQ
 
 <details>
-<summary><b>必须装过 Devin Desktop 吗？</b></summary>
+<summary><b>必须安装 Devin Desktop 客户端吗？</b></summary>
 <br>
-是。它直连的是 Devin 官方网关，凭证来自本地已登录的 Devin Desktop——装过、登录过一次，之后全自动。
+<b>完全不需要！</b> 2.1 版本已正式支持免装客户端一键登录：只需在终端执行一次 <code>npx devin-search-mcp login</code>，即可通过浏览器完成免费 OAuth 授权并自动保存凭证；若本机已安装并登录过 Devin 或 Windsurf，也会自动无感识别。
 </details>
 
 <details>
