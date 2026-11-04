@@ -9,3 +9,8 @@ yarn-error.log*
 *.tgz
 
 AGENTS.md
+
+# >>> experience-ignore >>>
+docs/experience/
+docs/tasks/
+# <<< experience-ignore <<<
